@@ -88,6 +88,10 @@ function createHtmlNode(node) {
 
     if (node.type === "file") {
         element.classList.add("file");
+
+        const icon = document.createElement("i");
+        icon.classList.add("icon__file", "fas", "fa-file");
+
         const nameParagraph = document.createElement("p");
         nameParagraph.textContent = node.name;
 
@@ -109,6 +113,7 @@ function createHtmlNode(node) {
             }
         });
 
+        element.appendChild(icon);
         element.appendChild(nameParagraph);
         element.appendChild(editBtn);
         element.appendChild(dltBtn);
@@ -117,7 +122,7 @@ function createHtmlNode(node) {
         element.classList.add("folder");
 
         const icon = document.createElement("i");
-        icon.classList.add("icon__folder", "fa-regular", "fa-folder-open");
+        icon.classList.add("icon__folder", "fas", "fa-folder-open");
 
         const toggleIcon = document.createElement("i");
         toggleIcon.classList.add("fa", "fa-caret-down", "toggle-icon");
