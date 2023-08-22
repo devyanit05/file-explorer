@@ -1,7 +1,7 @@
 // ---- Pure Functions ----
 // ------------------------
 
-// 1. Create new file/folder
+// 1. Create new file/folder  --- in use????????????
 function newElement() {
     var newName = prompt("Enter the name of the new file:");
     if (!validateName(newName)) {
@@ -13,20 +13,20 @@ function newElement() {
     return verifiedName;
 }
 
-// 2. Name Validation Check
+// 2. Name Validation Check  --- in use????????????
 function validateName(name) {
     var pattern = /^[a-zA-Z0-9]{1,10}$/;
     return pattern.test(name);
 }
 
-// 3. generateUniqueId
+// 3. generateUniqueId   --- in use????????????
 const idNameArr = [{ name: 'Root', id: 1 }]
 let initId = 1;
 
 function generateUniqueId(name) {
     var currentId = ++initId;
     idNameArr.push({ name, id: currentId });
-    console.log('Id: ', currentId)
+    console.log('Id: ', currentId);
     return currentId;
 }
 
@@ -131,9 +131,23 @@ function createHtmlNode(node) {
         newFileBtn.addEventListener("click", function () {
             const newName = newElement();
             if (newName) {
-                const newNodeId = generateUniqueId(newName);
-                const newNode = createNode(newNodeId, newName, "file", node.level + 1);
-                addNodeToStructureAndHtml(newNode, folderStructure, node.id);
+                var newNodeId = generateUniqueId(newName);
+                var parentFolderElement = event.target.closest(".folder");
+                var parentFolderElement2 = this.closest(".folder");
+                var parentFolderElement1 = event.target.parentNode;
+                console.log("parentFolderElement1:", parentFolderElement1);
+                console.log("parentFolderElement: ", parentFolderElement);
+                console.log("parentFolderElement2: ", parentFolderElement2);
+                if (parentFolderElement) {
+                    console.log("Inside if of parentFolderElement")
+                    var parentFolderId = parentFolderElement.id;
+                    var parentFolderId1 = parentFolderElement1.id;
+                    console.log("parentFolderId: ", parentFolderId);
+                    console.log("parentFolderId1: ", parentFolderId1);
+                    var newNodeLevel = getLevel(parseInt(parentFolderId));
+                    var newNode = createNode(newNodeId, newName, "file", newNodeLevel);
+                    addNodeToStructureAndHtml(newNode, parentFolderId);
+                }
             }
         });
 
@@ -154,10 +168,25 @@ function createHtmlNode(node) {
         newFolderBtn.addEventListener("click", function () {
             const newName = newElement();
             if (newName) {
-                const newNodeId = generateUniqueId(newName);
-                const newNode = createNode(newNodeId, newName, "folder", node.level + 1);
-                newNode.children = [];
-                addNodeToStructureAndHtml(newNode, folderStructure, node.id);
+                var newNodeId = generateUniqueId(newName);
+                var parentFolderElement = this.closest(".folder");
+                var parentFolderElement1 = event.target.parentNode;
+                console.log("parentFolderElement1:", parentFolderElement1);
+                console.log("parentFolderElement: ", parentFolderElement);
+                if (parentFolderElement) {
+                    console.log("Inside if of parentFolderElement")
+                    const parentFolderId = parentFolderElement.id;
+                    var parentFolderId1 = parentFolderElement1.id;
+                    console.log("parentFolderId: ", parentFolderId);
+                    console.log("parentFolderId1: ", parentFolderId1);
+                    var newNodeLevel = getLevel(parseInt(parentFolderId));
+                    var newNode = createNode(newNodeId, newName, "folder", newNodeLevel);
+                    addNodeToStructureAndHtml(newNode, parentFolderId);
+                } else {
+                    console.log("Never found parentFolderElement")
+                }
+            } else {
+                console.log("Never went in new name")
             }
         });
 
@@ -199,18 +228,45 @@ function addNodeToStructureAndHtml(newNode, parentFolderId) {
     }
 }
 
+// function findNodeById(structure, id) {
+//     console.log("Structure.id: ", structure.id);
+//     console.log("id: ", id);
+//     console.log("comp bool: ", structure.id == id)
+//     if (structure.id == id) {
+//         console.log("Structure: ", structure)
+//         return structure;
+//     }
+
+//     if (structure.children) {
+//         for (const child of structure.children) {
+//             const foundNode = findNodeById(child, id);
+//             if (foundNode) {
+//                 return foundNode;
+//             }
+//         }
+//     }
+
+//     return null;
+// }
+
 function findNodeById(structure, id) {
-    console.log("Structure.id: ", structure.id);
-    console.log("id: ", id);
-    console.log("comp bool: ", structure.id == id)
-    if (structure.id == id) {
-        console.log("Structure: ", structure)
-        return structure;
+    for (const node of structure) {
+        const foundNode = searchNode(node, id);
+        if (foundNode) {
+            return foundNode;
+        }
+    }
+    return null;
+}
+
+function searchNode(node, id) {
+    if (node.id == id) {
+        return node;
     }
 
-    if (structure.children) {
-        for (const child of structure.children) {
-            const foundNode = findNodeById(child, id);
+    if (node.children) {
+        for (const child of node.children) {
+            const foundNode = searchNode(child, id);
             if (foundNode) {
                 return foundNode;
             }

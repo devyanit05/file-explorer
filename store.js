@@ -1,6 +1,6 @@
 // Reference of state
 
-const folderStructure = {
+const folderStructure = [{
     id: 1,
     level: 1,
     type: "folder",
@@ -30,4 +30,4 @@ const folderStructure = {
         //     children: null
         // }
     ]
-};
+}];
