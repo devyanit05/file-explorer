@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>File Manager</title>
+</head>
+<body>
+    <div class="main_window">
+        <div class="title_element">
+            <h1></h1>
+        </div>
+        <div class="title_underline"></div>
+        <div class="struct__section">
+        <!-- All the divs will be visible here.. -->
+            <div id="1" class="folder">
+                <i class="icon__folder fa-regular fa-folder-open"></i>
+                Root
+                <button id="newFileBtn">New File</button>
+                <button id="newFolderBtn">New Folder</button>
+            </div>
+        </div>
+        <footer class="footer">
+            <div class="container">
+                <p>&copy; 2023 by Devyani. All rights reserved.</p>
+            </div>
+        </footer>
+    </div>
+    <script src="app.js"></script>
+    <script src="utils.js"></script>
+    <script src="store.js"></script>
+</body>
+</html>

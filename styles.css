@@ -1,0 +1,38 @@
+*{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+/* .icon__folder{
+    color: rgb(252, 206, 0);
+} */
+
+.struct__section {
+    border: solid 2px cornflowerblue;
+    padding: 10px;
+}
+
+.folder{
+    border: dashed 1px skyblue;
+}
+.folder *{
+    margin: 20px;
+}
+
+.file{
+    border: dotted 1px blanchedalmond;
+}
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 20px 0;
+    text-align: center;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+
+.footer p {
+    margin: 0;
+    font-size: 14px;
+    color: #6c757d;
+}
