@@ -96,7 +96,7 @@ function createHtmlNode(node) {
         nameParagraph.textContent = node.name;
 
         const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
+        editBtn.textContent = "Rename";
         editBtn.addEventListener("click", function () {
             const newName = prompt("Enter the new name:");
             if (newName) {
@@ -134,7 +134,7 @@ function createHtmlNode(node) {
         childrenContainer.classList.add("folder__children");
 
         const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
+        editBtn.textContent = "Rename";
         editBtn.addEventListener("click", function () {
             const newName = prompt("Enter the new name:");
             if (newName) {
