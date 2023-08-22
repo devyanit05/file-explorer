@@ -81,15 +81,6 @@ function validateNode(obj) {
     }
 }
 
-// 4. Append Element to Array
-function updateFolderStructure(parentId, validationStatus, childObj) {
-    var parent = parentId;
-    var child = childObj;
-    if (validationStatus) {
-        parent.children.push(child);
-    }
-}
-
 // 5. createHTMLNode
 function createHtmlNode(node) {
     const element = document.createElement("div");
@@ -97,34 +88,63 @@ function createHtmlNode(node) {
 
     if (node.type === "file") {
         element.classList.add("file");
-        element.textContent = node.name;
+        const nameParagraph = document.createElement("p");
+        nameParagraph.textContent = node.name;
 
         const editBtn = document.createElement("button");
         editBtn.textContent = "Edit";
         editBtn.addEventListener("click", function () {
             const newName = prompt("Enter the new name:");
             if (newName) {
-                node.name = newName;
-                updateNodeNameInHtml(node.id, newName);
-                // You might need to update the name in folderStructure array too
+                editNodeName(node, newName);
             }
         });
 
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.addEventListener("click", function () {
-            // Add your delete logic here
+        const dltBtn = document.createElement("button");
+        dltBtn.textContent = "Delete";
+        dltBtn.addEventListener("click", function () {
+            const confirmDelete = confirm("Are you sure you want to delete this node?");
+            if (confirmDelete) {
+                deleteNode(node.id);
+            }
         });
 
+        element.appendChild(nameParagraph);
         element.appendChild(editBtn);
-        element.appendChild(deleteBtn);
+        element.appendChild(dltBtn);
+
     } else if (node.type === "folder") {
         element.classList.add("folder");
+
         const icon = document.createElement("i");
         icon.classList.add("icon__folder", "fa-regular", "fa-folder-open");
-        const nameText = document.createTextNode(node.name);
-        element.appendChild(icon);
-        element.appendChild(nameText);
+
+        const toggleIcon = document.createElement("i");
+        toggleIcon.classList.add("fa", "fa-caret-down", "toggle-icon");
+
+        const nameParagraph = document.createElement("p");
+        nameParagraph.textContent = node.name;
+
+        const childrenContainer = document.createElement("div");
+        childrenContainer.classList.add("folder__children");
+
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.addEventListener("click", function () {
+            const newName = prompt("Enter the new name:");
+            if (newName) {
+                editNodeName(node, newName);
+            }
+        });
+
+        const dltBtn = document.createElement("button");
+        dltBtn.textContent = "Delete";
+        dltBtn.addEventListener("click", function () {
+            const confirmDelete = confirm("Are you sure you want to delete this node?");
+            if (confirmDelete) {
+                deleteNode(node.id);
+            }
+        });
 
         const newFileBtn = document.createElement("button");
         newFileBtn.textContent = "New File";
@@ -132,35 +152,17 @@ function createHtmlNode(node) {
             const newName = newElement();
             if (newName) {
                 var newNodeId = generateUniqueId(newName);
-                var parentFolderElement = event.target.closest(".folder");
-                var parentFolderElement2 = this.closest(".folder");
-                var parentFolderElement1 = event.target.parentNode;
-                console.log("parentFolderElement1:", parentFolderElement1);
+                var parentFolderElement = this.closest(".folder");
                 console.log("parentFolderElement: ", parentFolderElement);
-                console.log("parentFolderElement2: ", parentFolderElement2);
                 if (parentFolderElement) {
                     console.log("Inside if of parentFolderElement")
                     var parentFolderId = parentFolderElement.id;
-                    var parentFolderId1 = parentFolderElement1.id;
                     console.log("parentFolderId: ", parentFolderId);
-                    console.log("parentFolderId1: ", parentFolderId1);
                     var newNodeLevel = getLevel(parseInt(parentFolderId));
                     var newNode = createNode(newNodeId, newName, "file", newNodeLevel);
                     addNodeToStructureAndHtml(newNode, parentFolderId);
                 }
             }
-        });
-
-        const editBtn = document.createElement("button");
-        editBtn.textContent = "Edit";
-        editBtn.addEventListener("click", function () {
-            // Add your edit logic here
-        });
-
-        const deleteBtn = document.createElement("button");
-        deleteBtn.textContent = "Delete";
-        deleteBtn.addEventListener("click", function () {
-            // Add your delete logic here
         });
 
         const newFolderBtn = document.createElement("button");
@@ -170,15 +172,15 @@ function createHtmlNode(node) {
             if (newName) {
                 var newNodeId = generateUniqueId(newName);
                 var parentFolderElement = this.closest(".folder");
-                var parentFolderElement1 = event.target.parentNode;
-                console.log("parentFolderElement1:", parentFolderElement1);
+                // var parentFolderElement1 = event.target.parentNode;
+                // console.log("parentFolderElement1:", parentFolderElement1);
                 console.log("parentFolderElement: ", parentFolderElement);
                 if (parentFolderElement) {
                     console.log("Inside if of parentFolderElement")
                     const parentFolderId = parentFolderElement.id;
-                    var parentFolderId1 = parentFolderElement1.id;
+                    // var parentFolderId1 = parentFolderElement1.id;
                     console.log("parentFolderId: ", parentFolderId);
-                    console.log("parentFolderId1: ", parentFolderId1);
+                    // console.log("parentFolderId1: ", parentFolderId1);
                     var newNodeLevel = getLevel(parseInt(parentFolderId));
                     var newNode = createNode(newNodeId, newName, "folder", newNodeLevel);
                     addNodeToStructureAndHtml(newNode, parentFolderId);
@@ -190,8 +192,27 @@ function createHtmlNode(node) {
             }
         });
 
+        childrenContainer.style.display = "none";
+
+        toggleIcon.addEventListener("click", function () {
+            childrenContainer.style.display = childrenContainer.style.display === "none" ? "block" : "none";
+            toggleIcon.classList.toggle("fa-caret-down");
+            toggleIcon.classList.toggle("fa-caret-right");
+        });
+
+        if (node.children) {
+            node.children.forEach(child => {
+                const childNode = createHtmlNode(child);
+                childrenContainer.appendChild(childNode);
+            });
+        }
+
+        element.appendChild(icon);
+        element.appendChild(toggleIcon);
+        element.appendChild(nameParagraph);
+        element.appendChild(childrenContainer);
         element.appendChild(editBtn);
-        element.appendChild(deleteBtn);
+        element.appendChild(dltBtn);
         element.appendChild(newFileBtn);
         element.appendChild(newFolderBtn);
     }
@@ -199,7 +220,7 @@ function createHtmlNode(node) {
     if (node.children) {
         node.children.forEach(child => {
             const childNode = createHtmlNode(child);
-            element.appendChild(childNode);
+            element.querySelector(".folder-children").appendChild(childNode);
         });
     }
 
@@ -207,12 +228,12 @@ function createHtmlNode(node) {
 }
 
 function addNodeToStructureAndHtml(newNode, parentFolderId) {
-    console.log("parentFolderId: ", parentFolderId);
-    console.log("folderStructure: ", folderStructure);
+    // console.log("parentFolderId: ", parentFolderId);
+    // console.log("folderStructure: ", folderStructure);
     const parentFolder = findNodeById(folderStructure, parentFolderId);
-    console.log(parentFolder);
+    // console.log(parentFolder);
     if (!parentFolder) {
-        console.log("Parent folder not found.");
+        // console.log("Parent folder not found.");
         return;
     }
 
@@ -222,32 +243,11 @@ function addNodeToStructureAndHtml(newNode, parentFolderId) {
         const parentNode = document.getElementById(parentFolderId);
         const newNodeElement = createHtmlNode(newNode);
         parentNode.appendChild(newNodeElement);
-        console.log(folderStructure);
+        // console.log(folderStructure);
     } else {
         console.log("Some issue with addNodeToStructureAndHtml function ka validateNode function.");
     }
 }
-
-// function findNodeById(structure, id) {
-//     console.log("Structure.id: ", structure.id);
-//     console.log("id: ", id);
-//     console.log("comp bool: ", structure.id == id)
-//     if (structure.id == id) {
-//         console.log("Structure: ", structure)
-//         return structure;
-//     }
-
-//     if (structure.children) {
-//         for (const child of structure.children) {
-//             const foundNode = findNodeById(child, id);
-//             if (foundNode) {
-//                 return foundNode;
-//             }
-//         }
-//     }
-
-//     return null;
-// }
 
 function findNodeById(structure, id) {
     for (const node of structure) {
@@ -276,15 +276,42 @@ function searchNode(node, id) {
     return null;
 }
 
+function editNodeName(node, newNodeName) {
+    if (!validateName(newNodeName)) {
+        alert("Invalid folder/file name. Please enter a valid name with maximum 10 alphanumeric characters.");
+        return;
+    }
+
+    node.name = newNodeName;
+    updateNodeNameInHtml(node.id, newNodeName);
+
+    const nodeToUpdate = findNodeById(folderStructure, node.id);
+    if (nodeToUpdate) {
+        nodeToUpdate.name = newNodeName;
+    }
+}
+
+
 function updateNodeNameInHtml(nodeId, newName) {
     const nodeElement = document.getElementById(nodeId);
     if (nodeElement) {
-        if (nodeElement.classList.contains("file")) {
-            nodeElement.textContent = newName;
-        } else if (nodeElement.classList.contains("folder")) {
-            const nameTextNode = nodeElement.querySelector(".name-text");
-            if (nameTextNode) {
-                nameTextNode.textContent = newName;
+        const nameParagraph = nodeElement.querySelector("p");
+        if (nameParagraph) {
+            nameParagraph.textContent = newName;
+        }
+    }
+}
+
+function deleteNode(nodeId) {
+    const nodeElement = document.getElementById(nodeId);
+    if (nodeElement) {
+        nodeElement.remove();
+
+        const parentNode = findNodeById(folderStructure, nodeId);
+        if (parentNode) {
+            const indexToRemove = parentNode.children.findIndex(child => child.id === nodeId);
+            if (indexToRemove !== -1) {
+                parentNode.children.splice(indexToRemove, 1);
             }
         }
     }
